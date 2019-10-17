@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity() {
 
         qStation = Volley.newRequestQueue(this@MainActivity)
 
-        var amListStation = findViewById<ListView>(R.id.amListStation)
-
         getStation()
     }
 
@@ -59,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             }
         }, Response.ErrorListener { e ->
             Log.d(">>>>>",e.message)
-            //AlertMessage("Menu Error","The app cannot retrieve the menu. Error log: $e",this@MainMenu)
         }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
