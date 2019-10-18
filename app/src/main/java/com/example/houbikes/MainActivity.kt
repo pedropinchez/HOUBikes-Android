@@ -1,5 +1,6 @@
 package com.example.houbikes
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
@@ -50,10 +51,16 @@ class MainActivity : AppCompatActivity() {
             val adapter = CStationAdapter(this, aList)
             amListStation.adapter = adapter
 
-            //Log.d(">>>>>>",data.toString())
-            Log.d(">>>>>>",dlist.toString())
-            if (response != null) {
-                val aList = arrayListOf<CStation>()
+            amListStation.setOnItemClickListener { _, _, position, _ ->
+                var intent: Intent? = Intent(this, StationActivity::class.java)
+
+                intent!!.putExtra("station_id",aList[position].STATION_ID)
+                intent!!.putExtra("name",aList[position].STATION_NAME)
+                intent!!.putExtra("address",aList[position].STATION_ADDRESS)
+                intent!!.putExtra("lat",aList[position].STATION_LAT)
+                intent!!.putExtra("lon",aList[position].STATION_LON)
+
+                startActivity(intent)
             }
         }, Response.ErrorListener { e ->
             Log.d(">>>>>",e.message)
