@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
 import android.util.Log
+import android.view.View
 import android.widget.ListView
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -18,26 +19,28 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private var qStation: RequestQueue? = null
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         qStation = Volley.newRequestQueue(this@MainActivity)
 
+        setTitle("HOU Bike Share")
+
         getStation()
     }
-
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     private fun getStation(){
         val aList = arrayListOf<CStation>()
         val request = object: JsonObjectRequest(Method.GET, "https://gbfs.bcycle.com/bcycle_houston/station_information.json", null, Response.Listener<JSONObject> { response ->
-            //val data = JSONArray(response.toString())
-            val data = JSONObject(response.toString())
-            val dStation = JSONObject(data.get("data").toString())
-            val dlist = JSONArray(dStation.get("stations").toString())
+            val dObject = JSONObject(response.toString())
+            val data = JSONObject(dObject.get("data").toString())
+            val dStations = JSONArray(data.get("stations").toString())
 
-            for (i in 0 until dlist.length()) {
-                var dataInner: JSONObject = dlist.getJSONObject(i)
-                Log.d(">>>>>>",dataInner.getString("name"))
+            for (i in 0 until dStations.length()) {
+                var dataInner: JSONObject = dStations.getJSONObject(i)
+                //Log.d(">>>>>>",dataInner.getString("name"))
                 aList.add(
                     CStation(
                         dataInner.getString("station_id"),
@@ -54,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             amListStation.setOnItemClickListener { _, _, position, _ ->
                 var intent: Intent? = Intent(this, StationActivity::class.java)
 
+                // Pass the values to next activity (StationActivity)
                 intent!!.putExtra("station_id",aList[position].STATION_ID)
                 intent!!.putExtra("name",aList[position].STATION_NAME)
                 intent!!.putExtra("address",aList[position].STATION_ADDRESS)
@@ -62,6 +66,8 @@ class MainActivity : AppCompatActivity() {
 
                 startActivity(intent)
             }
+
+            amProgressBar.visibility = View.GONE
         }, Response.ErrorListener { e ->
             Log.d(">>>>>",e.message)
         }) {
@@ -74,4 +80,5 @@ class MainActivity : AppCompatActivity() {
         }
         qStation!!.add(request)
     }
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 }
